@@ -195,7 +195,9 @@ apiRoutes.delete('/users/:userid', function(req, res){
 apiRoutes.get('/check', function(req, res) {
     res.json(req.decoded);
 });
-
+apiRoutes.post('/analytics', function(req, res){
+    res.json(req.body);
+});
 app.use('/api', apiRoutes);
 
 // =================================================================
