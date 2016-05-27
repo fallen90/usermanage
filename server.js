@@ -2,52 +2,58 @@
 // get the packages we need ========================================
 // =================================================================
 var express = require('express');
+var compression = require('compression');
 var app = express();
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var mongoose = require('mongoose');
 var _ = require('lodash');
+var fs = require('fs');
 var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
+var moment = require('moment');
 var config = require('./config'); // get our config file
 var User = require('./app/models/user'); // get our mongoose model
 
 // =================================================================
 // configuration ===================================================
 // =================================================================
-var port = process.env.PORT || 80; // used to create, sign, and verify tokens
+var port = process.env.PORT || 8080; // used to create, sign, and verify tokens
 mongoose.connect(config.database); // connect to database
-app.set('superSecret', config.secret); // secret variable
 
-// use body parser so we can get info from POST and/or URL parameters
+app.set('superSecret', config.secret); // secret variable
+app.set('expiresIn', config.expiresIn); //expiresIn for tokens
+app.disable('x-powered-by'); //remove x-powered-by header
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-// use morgan to log requests to the console
-app.use(morgan('dev'));
-
+app.use(compression()); //use compressions for all requests
+// create a write stream (in append mode) 
+var accessLogStream = fs.createWriteStream(__dirname + '/access.log', {flags: 'a'});
+// setup the logger 
+app.use(morgan('combined', {stream: accessLogStream}));
 // =================================================================
 // routes ==========================================================
 // =================================================================
 app.get('/admin', function(req, res) {
-
-    // create a sample user
-    var nick = new User({
-        username: 'xxxx',
-        password: 'password',
-        admin: true
-    });
-    nick.save(function(err) {
-        try {
-            if (err) {
-                res.json({ success: false, message: "user already registered." });
-            } else {
-                console.log('User saved successfully');
-                res.json({ success: true });
-            }
-        } catch (ex) {
-            res.json({ success: false, message: "user already registered" });
-        }
-    });
+    try {
+        // create a sample user
+        var nick = new User({
+            username: 'xxxx',
+            password: 'password',
+            admin: true
+        });
+        nick.save(function(err) {
+           
+                if (err) {
+                    res.json({ success: false, message: "user already registered." });
+                } else {
+                    console.log('User saved successfully');
+                    res.json({ success: true });
+                }
+            
+        });
+    } catch (ex) {
+        res.json({ success: false, message: "an error occured", error: ex });
+    }
 });
 
 // basic route (http://localhost:8080)
@@ -86,13 +92,15 @@ apiRoutes.post('/authenticate', function(req, res) {
                     // if user is found and password is right
                     // create a token
                     var token = jwt.sign(user, app.get('superSecret'), {
-                        expiresIn: 1800 // expires in 30 minutes
+                        expiresIn: app.get('expiresIn') // expires in 30 minutes
                     });
 
                     res.json({
                         success: true,
                         message: 'Success!',
-                        accesstoken: token
+                        accesstoken: token,
+                        expiresIn: moment().add(app.get('expiresIn'), "seconds").unix(),
+                        currentTime:moment().unix()
                     });
                 }
 
@@ -145,7 +153,6 @@ apiRoutes.get('/', function(req, res) {
 });
 
 apiRoutes.post('/create', function(req, res) {
-    console.log('API CREATE');
     var fields = ['password', 'username', 'firstname', 'lastname', 'admin'];
     for (var i = fields.length - 1; i >= 0; i--) {
         if (!req.body.hasOwnProperty(fields[i])) {
@@ -176,10 +183,14 @@ apiRoutes.get('/users', function(req, res) {
         res.json(users);
     });
 });
-apiRoutes.post('/users/:userid', function(req, res){
+//get user info
+apiRoutes.get('/users/:userid', function(req, res){
     User.find({ id : req.params.userid }, function(err, users){
         res.json(users);
     });
+});
+apiRoutes.delete('/users/:userid', function(req, res){
+    
 });
 apiRoutes.get('/check', function(req, res) {
     res.json(req.decoded);
@@ -190,5 +201,11 @@ app.use('/api', apiRoutes);
 // =================================================================
 // start the server ================================================
 // =================================================================
-app.listen(port, "0.0.0.0");
+app.listen(port);
 console.log('Magic happens at http://0.0.0.0:' + port);
+
+
+process.on('uncaughtException', function(err) {
+    // handle the error safely
+    console.log(err)
+});
