@@ -44,7 +44,8 @@ api.post('/authenticate', function(req, res) {
                         message: 'Success!',
                         accesstoken: token,
                         expiresIn: moment().add(app.get('expiresIn'), "seconds").unix(),
-                        currentTime: moment().unix()
+                        currentTime: moment().unix(),
+                        user_info : user
                     });
                 }
 
