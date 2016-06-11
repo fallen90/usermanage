@@ -1,0 +1,29 @@
+{
+  "name": "usermanage",
+  "description": "",
+  "main": "start.js",
+  "authors": [
+    "fallen90 <slytherin9090@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/fallen90/usermanage",
+  "moduleType": [],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "app/webapp/lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "jquery": "^2.2.4",
+    "angular": "^1.5.6",
+    "angular-ui-router": "ui-router#^0.3.1",
+    "angular-ui-mask": "^1.8.4",
+    "angular-bootstrap": "^1.3.3",
+    "font-awesome": "^4.6.3"
+  }
+}

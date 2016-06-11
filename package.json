@@ -3,13 +3,23 @@
   "main": "start.js",
   "dependencies": {
     "body-parser": "^1.15.0",
+    "compression": "^1.6.2",
     "express": "^4.13.4",
+    "jade": "^1.11.0",
     "jsonwebtoken": "^5.7.0",
     "lodash": "^4.13.1",
-    "morgan": "^1.7.0",
-    "mongoose-unique-validator": "^1.0.2",
-    "mongoose": "^4.4.19",
     "moment": "^2.13.0",
-    "compression": "^1.6.2"
+    "mongoose": "^4.4.19",
+    "mongoose-unique-validator": "^1.0.2",
+    "morgan": "^1.7.0"
+  },
+  "devDependencies": {
+    "gulp-concat": "^2.6.0",
+    "gulp-filter": "^4.0.0",
+    "gulp-load-plugins": "^1.2.4",
+    "gulp-main-bower-files": "^1.5.1",
+    "gulp-order": "^1.1.1",
+    "gulp-uglify": "^1.5.3",
+    "main-bower-files": "^2.13.1"
   }
 }

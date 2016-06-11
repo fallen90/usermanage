@@ -20,9 +20,14 @@ app.use(compression());
 app.use(morgan('combined', { stream: fs.createWriteStream(__dirname + '/../access.log', { flags: 'a' }) }));
 
 
+app.set('view engine', 'jade');
+
 
 app.use('/', require('./webapp'));
 app.use('/api', require('./api'));
+
+app.use('/lib', express.static(__dirname + "/webapp/dist"));
+app.use('/app', express.static(__dirname + "/webapp/js"));
 
 // =================================================================
 // start the server ================================================
