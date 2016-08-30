@@ -104,31 +104,30 @@ api.route('/users')
         });
     })
     .post(function(req, res) {
-        var fields = ['password', 'username', 'firstname', 'lastname', 'admin'];
+        var fields = ['password', 'username', 'firstname', 'lastname'];
         for (var i = fields.length - 1; i >= 0; i--) {
             if (!req.body.hasOwnProperty(fields[i])) {
                 res.json({ success: false, message: 'required fields not found' });
             }
         }
-        // var user = new User({
-        //     username: req.body.username,
-        //     password: req.body.password,
-        //     firstname: req.body.firstname,
-        //     admin: false
-        // });
-        // user.save(function(err) {
-        //     try {
-        //         if (err) {
-        //             res.json({ success: false, message: "user already registered." });
-        //         } else {
-        //             //create user
-        //             res.json({ success: true, message: 'user created!' });
-        //         }
-        //     } catch (ex) {
-        //         res.json({ success: false, message: "user already registered" });
-        //     }
-        // });
-        // res.json({ message: 'still in writing' });
+        var user = new User({
+            username: req.body.username,
+            password: req.body.password,
+            firstname: req.body.firstname,
+            admin: false
+        });
+        user.save(function(err) {
+            try {
+                if (err) {
+                    res.json({ success: false, message: "user already registered." });
+                } else {
+                    //create user
+                    res.json({ success: true, message: 'user created!' });
+                }
+            } catch (ex) {
+                res.json({ success: false, message: "user already registered" });
+            }
+        });
     });
 
 api.param('userid', function(req, res, next, value) {

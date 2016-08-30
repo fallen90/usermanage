@@ -1,7 +1,7 @@
 
 var express = require('express');
-var compression = require('compression');
 var app = express();
+var compression = require('compression');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var mongoose = require('mongoose');

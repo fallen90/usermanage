@@ -1,6 +1,9 @@
 {
   "name": "usermanage",
   "main": "start.js",
+  "scripts" :{
+    "start" : "node start.js"
+  },
   "dependencies": {
     "body-parser": "^1.15.0",
     "express": "^4.13.4",
